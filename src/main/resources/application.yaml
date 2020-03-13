@@ -1,0 +1,33 @@
+
+server:
+  port: 8083
+  max-http-header-size: 1024KB
+spring:
+  application:
+    name: demo-excel
+  jpa:
+    show-sql: false
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test_excel?useSSL=false&useUnicode=true&characterEncoding=UTF-8
+    username: postgres
+    password: 123456
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: PoolHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
