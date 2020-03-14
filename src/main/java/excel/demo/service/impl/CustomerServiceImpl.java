@@ -57,12 +57,12 @@ public class CustomerServiceImpl implements CustomerService {
   private List<Customer> readExcel(MultipartFile excelFilePath) throws IOException {
 
     List<Customer> listBooks = new ArrayList<>();
-    // Get workbook
+    // Get workbook, workbook đại diện cho 1 file excel
     Workbook workbook = getWorkbook(excelFilePath);
-    // Get sheet
+    // Get sheet, đại diện cho một bảng tính
     Sheet sheet = workbook.getSheetAt(0);
 
-    // Get all rows
+    // Get all rows, row đại diện cho một hàng trong sheet
     Iterator<Row> iterator = sheet.iterator();
     while (iterator.hasNext()) {
       Row nextRow = iterator.next();
@@ -70,7 +70,7 @@ public class CustomerServiceImpl implements CustomerService {
         // Ignore header
         continue;
       }
-      // Get all cells
+      // Get all cells, cell đại diện cho một ô trong row
       Iterator<Cell> cellIterator = nextRow.cellIterator();
 
       // Read cells and set value for customer object
@@ -112,8 +112,11 @@ public class CustomerServiceImpl implements CustomerService {
 
   // Get Workbook
   private static Workbook getWorkbook(MultipartFile excelFilePath) throws IOException {
+
     Workbook workbook;
     if (Objects.requireNonNull(excelFilePath.getOriginalFilename()).endsWith("xlsx")) {
+
+      //XSSF đọc file excel 2007 trở lên
       workbook = new XSSFWorkbook(excelFilePath.getInputStream());
     } else if (excelFilePath.getOriginalFilename().endsWith("xls")) {
       workbook = new HSSFWorkbook(excelFilePath.getInputStream());
