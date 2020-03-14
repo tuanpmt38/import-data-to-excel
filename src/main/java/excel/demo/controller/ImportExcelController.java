@@ -1,24 +1,28 @@
 package excel.demo.controller;
 
 import excel.demo.service.CustomerService;
+import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("api/import-excel")
+@RequestMapping("api/export-excel")
 public class ImportExcelController {
 
   @Autowired
   CustomerService customerService;
 
-  @PostMapping("/import")
-  public void importExcelDataToDB(@RequestParam("file") MultipartFile file) {
+  @PostMapping("/export")
+  public void importExcelDataToDB(HttpServletResponse httpServletResponse) {
 
-    customerService.readFile(file);
+    try {
+      customerService.writeExcel(httpServletResponse);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
   }
 

@@ -1,8 +1,9 @@
 package excel.demo.service;
 
-import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
 
 public interface CustomerService {
 
-  void readFile(MultipartFile file);
+  void writeExcel(HttpServletResponse response) throws IOException;
 }

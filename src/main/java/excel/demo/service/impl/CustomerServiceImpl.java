@@ -4,28 +4,29 @@ import excel.demo.entity.Customer;
 import excel.demo.repository.CustomerRepository;
 import excel.demo.service.CustomerService;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
+
+  @Autowired
+  private CustomerRepository customerRepository;
 
   private static final int COLUMN_INDEX_ID = 0;
   private static final int COLUMN_INDEX_NAME = 1;
@@ -33,131 +34,91 @@ public class CustomerServiceImpl implements CustomerService {
   private static final int COLUMN_INDEX_AGE = 3;
   private static final int COLUMN_INDEX_BIRTH_DAY = 4;
 
-  @Autowired
-  private CustomerRepository customerRepository;
+  private static CellStyle cellStyleFormatNumber = null;
 
   @Override
-  public void readFile(MultipartFile file) {
+  public void writeExcel(HttpServletResponse response) throws IOException {
 
-    //read file
-    List<Customer> customers = null;
+    // get list customer from database
+
+    List<Customer> customers = getCustomer();
+
+    // Create a Workbook
+    Workbook workbook = new XSSFWorkbook();
+    Font headerFont = workbook.createFont();
+    headerFont.setBold(true);
+    headerFont.setFontHeightInPoints((short) 14);
+    headerFont.setColor(IndexedColors.BLACK.getIndex());
+
+    // region create cell styles to format
+    /* CreationHelper helps us create instances of various things like DataFormat,
+           Hyperlink, RichTextString etc, in a format (HSSF, XSSF) independent way */
+    CreationHelper createHelper = workbook.getCreationHelper();
+
+    // Create Cell Style for formatting Date
+    CellStyle dateCellStyle = workbook.createCellStyle();
+    dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+
+    CellStyle currency = workbook.createCellStyle();
+    DataFormat currencyFormatter = workbook.createDataFormat();
+    currency.setDataFormat(currencyFormatter.getFormat("#,##0.0"));
+
+    CellStyle phoneNumberStyle = workbook.createCellStyle();
+    DataFormat phoneFormatter = workbook.createDataFormat();
+    phoneNumberStyle.setDataFormat(phoneFormatter.getFormat("(###) ###-####"));
+
+    // Create a CellStyle with the font
+    CellStyle headerCellStyle = workbook.createCellStyle();
+    headerCellStyle.setFont(headerFont);
+    headerCellStyle.setFillForegroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex());
+    headerCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
+    //endregion
+
+    response.setHeader("Content-Disposition", "attachment;filename=\"customer.xls\"");
+    Sheet sheet = workbook.createSheet("Customer Data");
+    Row header = sheet.createRow(0);
+    header.createCell(0).setCellValue(" ID");
+    header.createCell(1).setCellValue(" Name");
+    header.createCell(2).setCellValue(" Address");
+    header.createCell(3).setCellValue(" Age");
+    header.createCell(4).setCellValue(" Birthday");
+
+    int rowNum = 1;
+    for (Customer customer : customers) {
+      Row row = sheet.createRow(rowNum++);
+      row.createCell(0).setCellValue(customer.getId());
+      row.createCell(1).setCellValue(customer.getName());
+      row.createCell(2).setCellValue(customer.getAddress());
+      row.createCell(3).setCellValue(customer.getAge());
+
+      // region Column 1: birthday
+      Cell birthdayCell = row.createCell(4);
+      birthdayCell.setCellValue(customer.getBirthday());
+      birthdayCell.setCellStyle(dateCellStyle);
+    }
+    // Try to determine file's content type
+    String pattern = "MM-dd-yyyy-HH-mm-ss";
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+    String fileName = "Du_lieu_" + simpleDateFormat.format(new Date()) + ".xlsx";
+    response
+        .setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    response
+        .setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
     try {
-      customers = readExcel(file);
+      workbook.write(response.getOutputStream());
     } catch (IOException e) {
       e.printStackTrace();
     }
-
-    if (!CollectionUtils.isEmpty(customers)) {
-      customers.forEach(customer -> {
-        customerRepository.save(customer);
-      });
-    }
-  }
-
-  private List<Customer> readExcel(MultipartFile excelFilePath) throws IOException {
-
-    List<Customer> listBooks = new ArrayList<>();
-    // Get workbook, workbook đại diện cho 1 file excel
-    Workbook workbook = getWorkbook(excelFilePath);
-    // Get sheet, đại diện cho một bảng tính
-    Sheet sheet = workbook.getSheetAt(0);
-
-    // Get all rows, row đại diện cho một hàng trong sheet
-    Iterator<Row> iterator = sheet.iterator();
-    while (iterator.hasNext()) {
-      Row nextRow = iterator.next();
-      if (nextRow.getRowNum() == 0) {
-        // Ignore header
-        continue;
-      }
-      // Get all cells, cell đại diện cho một ô trong row
-      Iterator<Cell> cellIterator = nextRow.cellIterator();
-
-      // Read cells and set value for customer object
-      Customer customer = new Customer();
-      while (cellIterator.hasNext()) {
-        //Read cell
-        Cell cell = cellIterator.next();
-        Object cellValue = getCellValue(cell);
-        if (cellValue == null || cellValue.toString().isEmpty()) {
-          continue;
-        }
-        // Set value for customer object
-        int columnIndex = cell.getColumnIndex();
-        switch (columnIndex) {
-          case COLUMN_INDEX_ID:
-            customer.setId(new BigDecimal((double) cellValue).longValue());
-            break;
-          case COLUMN_INDEX_NAME:
-            customer.setName((String) getCellValue(cell));
-            break;
-          case COLUMN_INDEX_ADDRESS:
-            customer.setAddress((String) getCellValue(cell));
-            break;
-          case COLUMN_INDEX_AGE:
-            customer.setAge(new BigDecimal((double) cellValue).longValue());
-            break;
-          case COLUMN_INDEX_BIRTH_DAY:
-            customer.setBirthday((Date) getCellValue(cell));
-            break;
-          default:
-            break;
-        }
-      }
-      listBooks.add(customer);
-    }
+    // Closing the workbook
     workbook.close();
-    return listBooks;
+
   }
 
-  // Get Workbook
-  private static Workbook getWorkbook(MultipartFile excelFilePath) throws IOException {
+  private List<Customer> getCustomer() {
 
-    Workbook workbook;
-    if (Objects.requireNonNull(excelFilePath.getOriginalFilename()).endsWith("xlsx")) {
+    List<Customer> customers = customerRepository.findAll();
 
-      //XSSF đọc file excel 2007 trở lên
-      workbook = new XSSFWorkbook(excelFilePath.getInputStream());
-    } else if (excelFilePath.getOriginalFilename().endsWith("xls")) {
-      workbook = new HSSFWorkbook(excelFilePath.getInputStream());
-    } else {
-      throw new IllegalArgumentException("The specified file is not Excel file");
-    }
-
-    return workbook;
-  }
-
-  // Get cell value
-  private static Object getCellValue(Cell cell) {
-    CellType cellType = cell.getCellType();
-    Object cellValue = null;
-    switch (cellType) {
-      case BOOLEAN:
-        cellValue = cell.getBooleanCellValue();
-        break;
-      case FORMULA:
-        Workbook workbook = cell.getSheet().getWorkbook();
-        FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
-        cellValue = evaluator.evaluate(cell).getNumberValue();
-        break;
-      case NUMERIC:
-        if (DateUtil.isCellDateFormatted(cell)) {
-          cellValue = cell.getDateCellValue();
-        } else {
-          cellValue = cell.getNumericCellValue();
-        }
-        break;
-      case STRING:
-        cellValue = cell.getStringCellValue();
-        break;
-      case _NONE:
-      case BLANK:
-      case ERROR:
-        break;
-      default:
-        break;
-    }
-
-    return cellValue;
+    return customers;
   }
 }
