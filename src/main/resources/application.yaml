@@ -1,6 +1,6 @@
 
 server:
-  port: 8083
+  port: 8080
   max-http-header-size: 1024KB
 spring:
   application:
@@ -42,7 +42,7 @@ spring:
       max-poll-records: 5
     properties:
       topics:
-        qrcode-dg-tag-group: topic.test
+        test: test
 
 elasticsearch:
   host: localhost
