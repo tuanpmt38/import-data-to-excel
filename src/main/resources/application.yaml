@@ -31,3 +31,7 @@ spring:
       pool-name: PoolHikariCP
       max-lifetime: 1800000
       connection-timeout: 30000
+elasticsearch:
+  host: localhost
+  port: 9200
+  scheme: http
