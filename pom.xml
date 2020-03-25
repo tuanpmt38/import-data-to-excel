@@ -10,10 +10,10 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>vn.mavn</groupId>
-  <artifactId>pm-patient-service</artifactId>
+  <artifactId>example</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>pm-patient-service</name>
-  <description>PM Patient service</description>
+  <name>example</name>
+  <description>example</description>
 
   <properties>
     <java.version>1.8</java.version>
@@ -73,6 +73,10 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>org.springframework.kafka</groupId>
+      <artifactId>spring-kafka</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>io.springfox</groupId>
@@ -150,11 +154,6 @@
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-elasticsearch</artifactId>
       <version>3.2.5.RELEASE</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.kafka</groupId>
-      <artifactId>spring-kafka</artifactId>
     </dependency>
 
 
