@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -29,7 +30,7 @@ import static javax.persistence.EnumType.STRING;
 @Table(name = "student_history")
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentHistory {
+public class StudentHistory extends Student {
 
     @Id
     @GeneratedValue
@@ -39,22 +40,20 @@ public class StudentHistory {
     @JoinColumn(name = "student_id")
     private Student student;
 
-    private String studentContent;
-
     @CreatedBy
     private Long createdBy;
 
     @CreatedDate
     private Timestamp updatedAt;
 
+    @CreatedDate
+    private Timestamp createdAt;
+
     @Enumerated(STRING)
     private Action action;
 
-    public StudentHistory(Student student, Action action) {
+    public StudentHistory(Student student , Action action) {
         this.student = student;
-        this.studentContent = student.toString();
         this.action = action;
     }
-
-
 }

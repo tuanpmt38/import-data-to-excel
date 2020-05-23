@@ -20,6 +20,8 @@ DROP TABLE IF EXISTS student_history;
 CREATE TABLE student_history(
     id serial,
     name VARCHAR (255)  NULL,
+    address VARCHAR (255)  NULL,
+    age BIGINT default null ,
     created_by int default null,
     student_id bigint     null default 0,
     updated_by int ,

@@ -34,16 +34,4 @@ public class Student extends Auditable<Long> {
     private String address;
     private Long age;
 
-
-//    public Student(Long id, String name, String address, Long age) {
-//        this.id = id;
-//        this.name = name;
-//        this.address = address;
-//        this.age = age;
-//    }
-//    public Student(String name, String address, Long age) {
-//        this.name = name;
-//        this.address = address;
-//        this.age = age;
-//    }
 }
