@@ -1,6 +1,5 @@
 package excel.demo.entity;
 
-import excel.demo.audit.Auditable;
 import excel.demo.entity.entitylistener.StudentEntityListener;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +24,7 @@ import javax.persistence.Table;
 @Table(name = "student")
 @EntityListeners(StudentEntityListener.class)
 @ToString
-public class Student extends Auditable<Long> {
+public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

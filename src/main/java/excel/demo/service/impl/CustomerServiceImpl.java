@@ -1,15 +1,21 @@
 package excel.demo.service.impl;
 
 import excel.demo.entity.Customer;
+import excel.demo.entity.Student;
 import excel.demo.repository.CustomerRepository;
 import excel.demo.service.CustomerService;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+
+import lombok.extern.log4j.Log4j2;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -19,12 +25,18 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jxls.common.Context;
+import org.jxls.util.JxlsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
+@Log4j2
 public class CustomerServiceImpl implements CustomerService {
 
   private static final int COLUMN_INDEX_ID = 0;
@@ -35,6 +47,9 @@ public class CustomerServiceImpl implements CustomerService {
 
   @Autowired
   private CustomerRepository customerRepository;
+
+  @Autowired
+  private ResourceLoader resourceLoader;
 
   @Override
   public void readFile(MultipartFile file) {
@@ -159,5 +174,33 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     return cellValue;
+  }
+
+
+
+  @Override
+  public ByteArrayResource export() {
+
+    String template = "classpath:excel_template/student.xls";
+    List<Customer> customers = customerRepository.findAll();
+    try {
+      Resource templateResource = resourceLoader.getResource(template);
+      if (!templateResource.exists()) {
+        return null;
+      }
+
+      InputStream inputStream = resourceLoader.getResource(template).getInputStream();
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      Context context = new Context();
+      context.putVar("customer", customers);
+      JxlsHelper.getInstance().processTemplate(inputStream, outputStream, context);
+      return new ByteArrayResource(outputStream.toByteArray());
+    } catch (IOException e){
+
+      log.info("loi",e);
+      return null;
+
+    }
+
   }
 }
