@@ -1,13 +1,12 @@
 package excel.demo.service;
 
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.util.Map;
 
 public interface CustomerService {
 
   void readFile(MultipartFile file);
 
-  ByteArrayResource export() throws IOException;
+  Map<String, Object> export();
 }
