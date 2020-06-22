@@ -14,8 +14,8 @@ public interface GreetingsStreams {
     String OUTPUT = "demo-excel";
 
     @Input(INPUT)
-    SubscribableChannel inboundGreetings();
+    SubscribableChannel input();
 
     @Output(OUTPUT)
-    MessageChannel outboundGreetings();
+    MessageChannel output();
 }
