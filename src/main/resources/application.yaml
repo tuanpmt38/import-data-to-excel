@@ -4,13 +4,20 @@ server:
 spring:
   application:
     name: oauth2-service
-
     properties:
       hibernate:
         jdbc:
           lob:
             non_contextual_creation: true
 
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9092
+      bindings:
+        demo-excel:
+          group: demo-excel
 vn:
   maven:
     security:
