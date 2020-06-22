@@ -34,3 +34,12 @@ spring:
 
   main:
     allow-bean-definition-overriding: true
+
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9092
+      bindings:
+        demo-excel:
+          group: demo-excel
