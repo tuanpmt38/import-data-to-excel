@@ -16,6 +16,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Greetings {
 
-    private long timestamp;
+    private String  name;
     private String message;
 }

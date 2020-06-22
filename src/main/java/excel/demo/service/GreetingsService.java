@@ -17,7 +17,6 @@ import org.springframework.util.MimeTypeUtils;
 @Log4j2
 public class GreetingsService {
 
-
     @Autowired
     private GreetingsStreams greetingsStreams;
 

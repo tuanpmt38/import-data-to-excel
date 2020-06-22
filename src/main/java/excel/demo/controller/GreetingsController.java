@@ -3,9 +3,9 @@ package excel.demo.controller;
 import excel.demo.entity.Greetings;
 import excel.demo.service.GreetingsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -18,11 +18,8 @@ public class GreetingsController {
     @Autowired
     private GreetingsService greetingsService;
 
-    @GetMapping("/greetings")
-    public void greetings (@RequestParam ("message") String message){
-        Greetings greetings = Greetings.builder()
-                .message(message)
-                .timestamp(System.currentTimeMillis()).build();
+    @PostMapping("/greetings")
+    public void greetings (@RequestBody Greetings greetings){
         greetingsService.sendGreeting(greetings);
     }
 

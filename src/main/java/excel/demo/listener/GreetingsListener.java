@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 @Log4j2
 public class GreetingsListener {
 
-    @StreamListener(GreetingsStreams.INPUT)
-    public void handlerGreetings(@Payload Greetings greetings){
-        log.info("Revived greetings: {}", greetings);
-    }
+//    @StreamListener(GreetingsStreams.INPUT)
+//    public void handlerGreetings(@Payload Greetings greetings){
+//        log.info("Revived greetings: {}", greetings);
+//    }
 }
