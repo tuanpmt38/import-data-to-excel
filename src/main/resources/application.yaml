@@ -41,5 +41,5 @@ spring:
         binder:
           brokers: localhost:9092
       bindings:
-        demo-excel:
-          group: demo-excel
+        out-put:
+          destination: demo-excel
