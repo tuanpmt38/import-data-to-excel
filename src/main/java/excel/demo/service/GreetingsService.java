@@ -23,7 +23,7 @@ public class GreetingsService {
     public void sendGreeting (final Greetings greetings){
         log.info("Sending greetings {}", greetings);
 
-        MessageChannel messageChannel = greetingsStreams.outboundGreetings();
+        MessageChannel messageChannel = greetingsStreams.output();
         messageChannel.send(
                 MessageBuilder
                         .withPayload(greetings).setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON).build());

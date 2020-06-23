@@ -11,7 +11,7 @@ import org.springframework.messaging.SubscribableChannel;
 public interface GreetingsStreams {
 
     String INPUT = "demo-excel";
-    String OUTPUT = "demo-excel";
+    String OUTPUT = "oauth2-service";
 
     @Input(INPUT)
     SubscribableChannel input();
