@@ -10,8 +10,8 @@ import org.springframework.messaging.SubscribableChannel;
  **/
 public interface GreetingProcess {
 
-    String INPUT = "demo-excel";
-    String OUTPUT = "oauth2-service";
+    String INPUT = "in-put";
+    String OUTPUT = "out-put";
 
     @Input(INPUT)
     SubscribableChannel input();

@@ -16,8 +16,8 @@ spring:
         binder:
           brokers: localhost:9092
       bindings:
-        demo-excel:
-          group: demo-excel
+        in-put:
+          destination: demo-excel
 vn:
   maven:
     security:
