@@ -1,5 +1,6 @@
 package excel.demo.service.impl;
 
+import excel.demo.dto.CustomerDto;
 import excel.demo.entity.Customer;
 import excel.demo.repository.CustomerRepository;
 import excel.demo.service.CustomerService;
@@ -19,6 +20,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -52,6 +54,25 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.save(customer);
       });
     }
+  }
+
+    @Override
+    public List<Customer> getAll() {
+        return customerRepository.findAll();
+    }
+
+  @Override
+  public Customer addCustomer(CustomerDto customerDto) {
+
+    Customer customer = new Customer();
+    BeanUtils.copyProperties(customerDto, customer);
+
+    return customerRepository.save(customer);
+  }
+
+  @Override
+  public Customer getDetail(Long id) {
+    return customerRepository.getOne(id);
   }
 
   private List<Customer> readExcel(MultipartFile excelFilePath) throws IOException {
