@@ -24,14 +24,14 @@ public class CustomerController {
     private CustomerService customerService;
 
     @GetMapping
-    public ResponseEntity<List<Customer>> getAllCustomer(){
+    public ResponseEntity<List<Customer>> getAllCustomer() {
 
         List<Customer> customers = customerService.getAll();
         return ResponseEntity.ok(customers);
     }
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(CustomerDto customerDto){
+    public ResponseEntity<Customer> createCustomer(CustomerDto customerDto) {
 
         Customer customer = customerService.addCustomer(customerDto);
         return ResponseEntity.ok(customer);
@@ -39,7 +39,7 @@ public class CustomerController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Customer> getDetail(@PathVariable("id") Long id){
+    public ResponseEntity<Customer> getDetail(@PathVariable("id") Long id) {
         Customer customer = customerService.getDetail(id);
         return ResponseEntity.ok(customer);
     }

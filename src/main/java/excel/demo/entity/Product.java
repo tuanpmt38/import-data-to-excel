@@ -12,24 +12,26 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "customer")
+@Table(name = "product")
 @Builder
 @Proxy(lazy = false)
-public class Customer {
+public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String address;
-    private Long age;
-    private Date birthday;
+    private String title;
+    private Integer price;
+    private Integer size;
+    private String description;
+    private String image;
+    private String color;
 
 }
