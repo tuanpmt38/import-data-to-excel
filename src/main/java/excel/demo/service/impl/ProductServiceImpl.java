@@ -2,13 +2,19 @@ package excel.demo.service.impl;
 
 import excel.demo.dto.ProductDto;
 import excel.demo.dto.ProductResponseDto;
+import excel.demo.dto.QueryProductDto;
 import excel.demo.entity.Product;
 import excel.demo.repository.ProductRepository;
+import excel.demo.repository.spec.ProductSpec;
 import excel.demo.service.ProductService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,6 +53,28 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product getDetail(Long id) {
         return productRepository.getOne(id);
+    }
+
+    @Override
+    public Page<ProductDto> findAllProductByData(QueryProductDto data, Pageable pageable) {
+
+        Page<Product> products = productRepository.findAll(ProductSpec.findAllProducts(data), pageable);
+        if (CollectionUtils.isEmpty(products.getContent())){
+            return Page.empty();
+        }
+        return products.map(
+                product -> {
+                    return ProductDto.builder()
+                            .color(product.getColor())
+                            .description(product.getDescription())
+                            .image(product.getImage())
+                            .price(BigDecimal.valueOf(product.getPrice()))
+                            .title(product.getTitle())
+                            .size(product.getSize())
+                            .build();
+                }
+        );
+
     }
 
 }
