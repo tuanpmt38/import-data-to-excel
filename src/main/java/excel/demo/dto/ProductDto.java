@@ -25,6 +25,5 @@ public class ProductDto implements Serializable {
     private Integer size;
     private String description;
     private String image;
-    private String color;
 
 }

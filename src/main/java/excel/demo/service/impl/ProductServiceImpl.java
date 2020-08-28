@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,17 +30,20 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductResponseDto> getAll() {
         List<Product> products = productRepository.findAll();
+
         List<ProductResponseDto> productResponseDtos = new ArrayList<>();
         products.stream().map(
                 product -> {
                     ProductResponseDto productResponseDto = new ProductResponseDto();
-                    BeanUtils.copyProperties(product,productResponseDto,product.getColor());
-                    productResponseDto.setColor(Integer.parseInt(product.getColor()));
+                    BeanUtils.copyProperties(product,productResponseDto);
+                    productResponseDto.setColor(product.getColor().intValue());
                     return productResponseDtos.add(productResponseDto);
                 }
         ).collect(Collectors.toList());
         return productResponseDtos;
     }
+
+
 
     @Override
     public Product addProduct(ProductDto productDto) {
@@ -65,7 +69,6 @@ public class ProductServiceImpl implements ProductService {
         return products.map(
                 product -> {
                     return ProductDto.builder()
-                            .color(product.getColor())
                             .description(product.getDescription())
                             .image(product.getImage())
                             .price(BigDecimal.valueOf(product.getPrice()))
@@ -75,6 +78,13 @@ public class ProductServiceImpl implements ProductService {
                 }
         );
 
+    }
+
+    @Override
+    public Map<Long, Product> getMapData() {
+
+        List<Product> products = productRepository.findAll();
+        return products.stream().collect(Collectors.toMap(Product::getId, o->o));
     }
 
 }

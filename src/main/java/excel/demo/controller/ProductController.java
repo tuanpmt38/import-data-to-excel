@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by TuanPM on 2020-06-28.
@@ -68,5 +69,9 @@ public class ProductController {
                 .ok(ResponseWithPage.<ProductDto>builder().data(page.getContent())
                         .pageIndex(page.getNumber())
                         .totalPage(page.getTotalPages()).totalElement(page.getTotalElements()).build());
+    }
+    @GetMapping("data")
+    public Map<Long, Product> mapProduct (){
+        return productService.getMapData();
     }
 }

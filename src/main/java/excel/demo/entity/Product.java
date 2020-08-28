@@ -27,11 +27,11 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private BigDecimal color;
     private String title;
     private Integer price;
     private Integer size;
     private String description;
     private String image;
-    private String color;
 
 }
