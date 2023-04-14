@@ -22,7 +22,7 @@
     <jwt.version>1.0.10.RELEASE</jwt.version>
     <maven.checkstyle.version>3.1.0</maven.checkstyle.version>
     <maven.findbugs.version>3.0.5</maven.findbugs.version>
-    <json.version>20190722</json.version>
+    <json.version>20230227</json.version>
     <common.code.version>1.13</common.code.version>
   </properties>
 
