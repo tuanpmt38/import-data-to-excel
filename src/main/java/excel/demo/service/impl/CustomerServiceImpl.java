@@ -35,8 +35,12 @@ public class CustomerServiceImpl implements CustomerService {
   private static final int COLUMN_INDEX_AGE = 3;
   private static final int COLUMN_INDEX_BIRTH_DAY = 4;
 
+
+  private final CustomerRepository customerRepository;
   @Autowired
-  private CustomerRepository customerRepository;
+  public CustomerServiceImpl(CustomerRepository customerRepository) {
+    this.customerRepository = customerRepository;
+  }
 
   @Override
   public void readFile(MultipartFile file) {
@@ -50,9 +54,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     if (!CollectionUtils.isEmpty(customers)) {
-      customers.forEach(customer -> {
-        customerRepository.save(customer);
-      });
+      customerRepository.saveAll(customers);
     }
   }
 
@@ -84,49 +86,47 @@ public class CustomerServiceImpl implements CustomerService {
     Sheet sheet = workbook.getSheetAt(0);
 
     // Get all rows, row đại diện cho một hàng trong sheet
-    Iterator<Row> iterator = sheet.iterator();
-    while (iterator.hasNext()) {
-      Row nextRow = iterator.next();
-      if (nextRow.getRowNum() == 0) {
-        // Ignore header
-        continue;
-      }
-      // Get all cells, cell đại diện cho một ô trong row
-      Iterator<Cell> cellIterator = nextRow.cellIterator();
+      for (Row nextRow : sheet) {
+          if (nextRow.getRowNum() == 0) {
+              // Ignore header
+              continue;
+          }
+          // Get all cells, cell đại diện cho một ô trong row
+          Iterator<Cell> cellIterator = nextRow.cellIterator();
 
-      // Read cells and set value for customer object
-      Customer customer = new Customer();
-      while (cellIterator.hasNext()) {
-        //Read cell
-        Cell cell = cellIterator.next();
-        Object cellValue = getCellValue(cell);
-        if (cellValue == null || cellValue.toString().isEmpty()) {
-          continue;
-        }
-        // Set value for customer object
-        int columnIndex = cell.getColumnIndex();
-        switch (columnIndex) {
-          case COLUMN_INDEX_ID:
-            customer.setId(new BigDecimal((double) cellValue).longValue());
-            break;
-          case COLUMN_INDEX_NAME:
-            customer.setName((String) getCellValue(cell));
-            break;
-          case COLUMN_INDEX_ADDRESS:
-            customer.setAddress((String) getCellValue(cell));
-            break;
-          case COLUMN_INDEX_AGE:
-            customer.setAge(new BigDecimal((double) cellValue).longValue());
-            break;
-          case COLUMN_INDEX_BIRTH_DAY:
-            customer.setBirthday((Date) getCellValue(cell));
-            break;
-          default:
-            break;
-        }
+          // Read cells and set value for customer object
+          Customer customer = new Customer();
+          while (cellIterator.hasNext()) {
+              //Read cell
+              Cell cell = cellIterator.next();
+              Object cellValue = getCellValue(cell);
+              if (cellValue == null || cellValue.toString().isEmpty()) {
+                  continue;
+              }
+              // Set value for customer object
+              int columnIndex = cell.getColumnIndex();
+              switch (columnIndex) {
+                  case COLUMN_INDEX_ID:
+                      customer.setId(BigDecimal.valueOf((double) cellValue).longValue());
+                      break;
+                  case COLUMN_INDEX_NAME:
+                      customer.setName((String) getCellValue(cell));
+                      break;
+                  case COLUMN_INDEX_ADDRESS:
+                      customer.setAddress((String) getCellValue(cell));
+                      break;
+                  case COLUMN_INDEX_AGE:
+                      customer.setAge(BigDecimal.valueOf((double) cellValue).longValue());
+                      break;
+                  case COLUMN_INDEX_BIRTH_DAY:
+                      customer.setBirthday((Date) getCellValue(cell));
+                      break;
+                  default:
+                      break;
+              }
+          }
+          listBooks.add(customer);
       }
-      listBooks.add(customer);
-    }
     workbook.close();
     return listBooks;
   }

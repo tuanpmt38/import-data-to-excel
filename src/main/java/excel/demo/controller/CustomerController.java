@@ -4,13 +4,16 @@ import excel.demo.dto.CustomerDto;
 import excel.demo.entity.Customer;
 import excel.demo.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -20,8 +23,11 @@ import java.util.List;
 @RequestMapping("api/v1/customers")
 public class CustomerController {
 
+    private final CustomerService customerService;
     @Autowired
-    private CustomerService customerService;
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Customer>> getAllCustomer(){
@@ -31,7 +37,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(CustomerDto customerDto){
+    public ResponseEntity<Customer> createCustomer(@RequestBody CustomerDto customerDto) {
 
         Customer customer = customerService.addCustomer(customerDto);
         return ResponseEntity.ok(customer);
